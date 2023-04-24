@@ -16,7 +16,7 @@ td {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="user, index in state.userList" :key="user.id">
+      <tr v-for="(user, index) in state.userList" :key="user.id">
         <td>{{ user.id }}</td>
         <td :data-index="index" data-field="name">
           <span>{{ user.name }}</span>
@@ -35,20 +35,24 @@ td {
 <script setup>
 import { io } from 'socket.io-client'
 import { reactive, computed } from 'vue'
-import vTableClick from './directives/table-click';
+import vTableClick from './directives/table-click'
+
+const socket = io('http://localhost:3000')
 
 const state = reactive({
   userList: [],
   status: false,
   field: '',
-  index: -1
+  index: -1,
+  socket,
 })
+const statusText = computed(() => (state.status ? '正在修改...' : ''))
 
-const statusText = computed(() => state.status ? '正在修改...' : ''
-)
-
-const socket = io('http://localhost:3000')
 socket.on('loadData', (data) => {
   state.userList = data
+})
+
+socket.on('changeStatus', (status) => {
+  state.status = status
 })
 </script>

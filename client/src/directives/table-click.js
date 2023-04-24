@@ -2,13 +2,14 @@
 import { toRefs } from 'vue';
 const tableClick = {
   updated(el, binding, vnode) {
-    const { userList, status, field, index } = toRefs(binding.value);
+    const { userList, status, field, index, socket } = toRefs(binding.value);
 
     tableClick.el = el
     tableClick.userList = userList
     tableClick.status = status
     tableClick.field = field
     tableClick.index = index
+    tableClick.socket = socket.value
     bindEvent()
   }
 };
@@ -23,6 +24,7 @@ function removeInput() {
   unbindInputEvent()
   tableClick.input = null
   tableClick.target = null
+  tableClick.socket.emit('changeStatus', false)
 }
 
 function handleWindowClick(e) {
@@ -55,6 +57,8 @@ function handleTabelClick(e) {
     tableClick.index.value = index
 
     bindInputEvent()
+
+    tableClick.socket.emit('changeStatus', true)
   }
 
 
