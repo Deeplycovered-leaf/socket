@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express';
+import { Server } from 'socket.io';
 const app = express();
-const { Server } = require('socket.io')
 
 const io = new Server(3000, {
   cors: {
@@ -16,6 +16,10 @@ io.on('connection', (socket) => {
 
   socket.on('changeStatus', (status) => {
     io.emit('changeStatus', status)
+  })
+
+  socket.on('updatedUserList', (data) => {
+    io.emit('updatedUserList', data)
   })
 })
 

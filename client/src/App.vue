@@ -51,8 +51,15 @@ const statusText = computed(() => (state.status ? '正在修改...' : ''))
 socket.on('loadData', (data) => {
   state.userList = data
 })
-
 socket.on('changeStatus', (status) => {
   state.status = status
+})
+socket.on('updatedUserList', ({ field, index, value }) => {
+  state.userList = state.userList.map((user, idx) => {
+    if (idx === +index) {
+      user[field] = value
+    }
+    return user
+  })
 })
 </script>

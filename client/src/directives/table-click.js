@@ -1,7 +1,7 @@
 
 import { toRefs } from 'vue';
 const tableClick = {
-  updated(el, binding, vnode) {
+  mounted(el, binding) {
     const { userList, status, field, index, socket } = toRefs(binding.value);
 
     tableClick.el = el
@@ -10,6 +10,7 @@ const tableClick = {
     tableClick.field = field
     tableClick.index = index
     tableClick.socket = socket.value
+
     bindEvent()
   }
 };
@@ -27,8 +28,17 @@ function removeInput() {
   tableClick.socket.emit('changeStatus', false)
 }
 
+function handleInput(e) {
+  updatedUserList(e.target.value)
+}
+
+function updatedUserList(value) {
+  tableClick.socket.emit('updatedUserList', { field: tableClick.field.value, index: tableClick.index.value, value })
+}
+
 function handleWindowClick(e) {
   if (tableClick.input) {
+    updatedUserList(tableClick.input.value)
     removeInput()
   }
 }
@@ -66,11 +76,12 @@ function handleTabelClick(e) {
 
 function bindInputEvent() {
   tableClick.input.addEventListener('click', handleStopPropagation, false)
+  tableClick.input.addEventListener('input', handleInput, false)
 }
-
 
 function unbindInputEvent() {
   tableClick.input.removeEventListener('click', handleStopPropagation, false)
+  tableClick.input.removeEventListener('click', handleInput, false)
 }
 
 function getTarget(e) {
